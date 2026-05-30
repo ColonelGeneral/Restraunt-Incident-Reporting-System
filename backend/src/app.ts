@@ -1,8 +1,11 @@
 import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
-import { authRouter } from './routes/auth.route';
-import { healthRouter } from './routes/health.route';
+import { authRouter } from './routes/auth.route.js';
+import { aiRouter } from './routes/ai.route.js';
+import { analyticsRouter } from './routes/analytics.route.js';
+import { incidentRouter } from './routes/incident.route.js';
+import { healthRouter } from './routes/health.route.js';
 
 export const createApp = () => {
   const app = express();
@@ -12,6 +15,9 @@ export const createApp = () => {
   app.use(express.json());
   app.use('/api', healthRouter);
   app.use('/api/auth', authRouter);
+  app.use('/api/incidents', incidentRouter);
+  app.use('/api/ai', aiRouter);
+  app.use('/api/analytics', analyticsRouter);
 
   app.use((_, response) => {
     response.status(404).json({ message: 'Route not found' });

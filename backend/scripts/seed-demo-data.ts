@@ -1,8 +1,8 @@
 import 'dotenv/config';
 import bcrypt from 'bcryptjs';
-import { connectDatabase } from '../src/config/db';
-import { env } from '../src/config/env';
-import { User } from '../src/models/user.model';
+import { connectDatabase } from '../src/config/db.js';
+import { env } from '../src/config/env.js';
+import { User } from '../src/models/user.model.js';
 
 const demoUsers = [
   {
