@@ -178,8 +178,10 @@ incidentRouter.patch('/:id', authenticateUser, async (request: AuthenticatedRequ
     return response.status(403).json({ message: 'Insufficient permissions' });
   }
 
-  if (!isPrivileged && incident.status !== 'Open') {
-    return response.status(400).json({ message: 'Employee incidents can only be edited while Open' });
+  // New rule: once an employee creates an incident it cannot be edited by that employee.
+  // Managers and admins remain able to edit incidents.
+  if (isOwner && currentUser.role === 'employee' && !isPrivileged) {
+    return response.status(403).json({ message: 'Employees cannot edit incidents after creation' });
   }
 
   const previousState = incident.toObject();

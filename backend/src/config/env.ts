@@ -17,8 +17,14 @@ if (existsSync(envPath)) {
 
 const envSchema = z.object({
   PORT: z.coerce.number().default(5000),
-  MONGODB_URI: z.string().min(1, 'MONGODB_URI is required'),
+  MONGODB_URI: z.string().optional(),
+  MONGODB_DIRECT_URI: z.string().optional(),
   JWT_SECRET: z.string().min(1, 'JWT_SECRET is required'),
+  ALLOW_OFFLINE_START: z.preprocess((v) => {
+    if (v === undefined) return false;
+    if (typeof v === 'string') return v === 'true' || v === '1';
+    return Boolean(v);
+  }, z.boolean()).optional(),
   DELETE_WINDOW_MINUTES: z.coerce.number().int().positive().default(60),
   GEMINI_API_KEY: z.string().optional(),
   GEMINI_API_URL: z.string().default('https://generativelanguage.googleapis.com/v1beta'),
@@ -31,4 +37,13 @@ const envSchema = z.object({
   CLOUDINARY_API_SECRET: z.string().optional()
 });
 
-export const env = envSchema.parse(process.env);
+const parsedEnv = envSchema.parse(process.env);
+
+if (!parsedEnv.MONGODB_URI && parsedEnv.ALLOW_OFFLINE_START === false) {
+  throw new Error('MONGODB_URI is required unless ALLOW_OFFLINE_START is enabled');
+}
+
+export const env = {
+  ...parsedEnv,
+  ALLOW_OFFLINE_START: parsedEnv.ALLOW_OFFLINE_START ?? !parsedEnv.MONGODB_URI
+};

@@ -1,0 +1,152 @@
+{
+  "info": {
+    "_postman_id": "d0d4a56f-3f01-4f7d-a1f7-incident-reporter",
+    "name": "Incident Reporter API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Login as Employee",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{employeeEmail}}\",\n  \"password\": \"{{employeePassword}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('employee login succeeds', function () { pm.response.to.have.status(200); });",
+              "const employeeLogin = pm.response.json();",
+              "pm.environment.set('employeeToken', employeeLogin.token);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Employee Me",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{employeeToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/auth/me"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('employee me succeeds', function () { pm.response.to.have.status(200); });",
+              "pm.test('returns user object', function () { pm.expect(pm.response.json()).to.have.property('user'); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Employee Incidents",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{employeeToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/incidents"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('employee can list incidents', function () { pm.response.to.have.status(200); });",
+              "const employeeIncidents = pm.response.json();",
+              "pm.test('response includes incidents array', function () { pm.expect(employeeIncidents).to.have.property('incidents'); pm.expect(employeeIncidents.incidents).to.be.an('array'); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Employee Analytics Forbidden",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{employeeToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/analytics/dashboard"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('employee is blocked from analytics', function () { pm.response.to.have.status(403); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Login as Manager",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": "{{baseUrl}}/api/auth/login",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"{{managerEmail}}\",\n  \"password\": \"{{managerPassword}}\"\n}"
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('manager login succeeds', function () { pm.response.to.have.status(200); });",
+              "const managerLogin = pm.response.json();",
+              "pm.environment.set('managerToken', managerLogin.token);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Manager Analytics Dashboard",
+      "request": {
+        "method": "GET",
+        "header": [
+          { "key": "Authorization", "value": "Bearer {{managerToken}}" }
+        ],
+        "url": "{{baseUrl}}/api/analytics/dashboard"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('manager can access analytics', function () { pm.response.to.have.status(200); });",
+              "const managerAnalytics = pm.response.json();",
+              "pm.test('analytics payload contains cards', function () { pm.expect(managerAnalytics).to.have.property('cards'); });"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ]
+    }
+  ]
+}

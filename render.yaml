@@ -1,0 +1,55 @@
+services:
+  - type: web
+    name: restaurant-incident-backend
+    env: node
+    plan: free
+    rootDir: .
+    buildCommand: npm install && npm run build -w backend
+    startCommand: npm run start -w backend
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ALLOW_OFFLINE_START
+        value: "false"
+      - key: MONGODB_URI
+        sync: false
+      - key: MONGODB_DIRECT_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: DELETE_WINDOW_MINUTES
+        value: "60"
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_API_URL
+        value: https://generativelanguage.googleapis.com/v1beta
+      - key: EMAIL_HOST
+        sync: false
+      - key: EMAIL_PORT
+        sync: false
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: CLOUDINARY_CLOUD_NAME
+        sync: false
+      - key: CLOUDINARY_API_KEY
+        sync: false
+      - key: CLOUDINARY_API_SECRET
+        sync: false
+
+  - type: static
+    name: restaurant-incident-frontend
+    env: static
+    rootDir: .
+    buildCommand: npm install && npm run build -w frontend
+    staticPublishPath: frontend/dist
+    autoDeploy: true
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_BASE_URL
+        sync: false

@@ -6,6 +6,7 @@ import { aiRouter } from './routes/ai.route.js';
 import { analyticsRouter } from './routes/analytics.route.js';
 import { incidentRouter } from './routes/incident.route.js';
 import { healthRouter } from './routes/health.route.js';
+import { uploadRouter } from './routes/upload.route.js';
 
 export const createApp = () => {
   const app = express();
@@ -15,6 +16,7 @@ export const createApp = () => {
   app.use(express.json());
   app.use('/api', healthRouter);
   app.use('/api/auth', authRouter);
+  app.use('/api/uploads', uploadRouter);
   app.use('/api/incidents', incidentRouter);
   app.use('/api/ai', aiRouter);
   app.use('/api/analytics', analyticsRouter);

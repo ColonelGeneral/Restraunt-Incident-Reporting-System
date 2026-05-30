@@ -1,44 +1,35 @@
-const appHighlights = [
-  'Employee incident reporting',
-  'Manager and admin review workflows',
-  'Gemini-assisted summaries and categorization',
-  'Seeded demo accounts for fast testing'
-];
+import React from 'react';
+import { Routes, Route, BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './auth/AuthProvider';
+import Header from './components/Header';
+import Landing from './pages/Landing';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Dashboard from './pages/Dashboard';
+import { ThemeProvider } from './theme/ThemeProvider';
 
-function App() {
+function AppRoutes() {
   return (
-    <main className="app-shell">
-      <section className="hero">
-        <p className="eyebrow">Restaurant Incident Reporting Tool</p>
-        <h1>Operational reporting with a clean workflow for staff and leadership.</h1>
-        <p className="lead">
-          This workspace is being built in phases so the incident lifecycle, analytics,
-          email notifications, and AI features can land in small reviewable commits.
-        </p>
-        <div className="hero-actions">
-          <a href="#milestones" className="primary-action">View milestones</a>
-          <a href="#setup" className="secondary-action">Setup notes</a>
-        </div>
-      </section>
-
-      <section className="panel" id="milestones">
-        <h2>Current foundation</h2>
-        <ul className="highlight-list">
-          {appHighlights.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
-      </section>
-
-      <section className="panel" id="setup">
-        <h2>Next system work</h2>
-        <p>
-          The backend will expose auth, incident, analytics, and AI endpoints. The frontend
-          will connect to MongoDB-backed APIs and Vercel deployment targets.
-        </p>
-      </section>
-    </main>
+    <>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <ThemeProvider>
+      <BrowserRouter>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </BrowserRouter>
+    </ThemeProvider>
+  );
+}
