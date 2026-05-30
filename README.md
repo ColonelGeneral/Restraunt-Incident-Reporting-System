@@ -10,6 +10,7 @@ Restaurant Incident Reporting Tool is a monorepo for reporting, tracking, and an
 - Uploaded incident images are stored through Cloudinary.
 - Demo accounts are pre-seeded for quick local testing.
 - Dark mode is available from the top navigation bar.
+- `App URL:https://restraunt-incident-reporting-system.vercel.app` 
 
 ## Project Structure
 
