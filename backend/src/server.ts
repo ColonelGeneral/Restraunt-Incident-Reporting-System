@@ -20,7 +20,9 @@ async function startServer() {
     if (!existsSync(frontendIndex)) {
       console.warn('frontend/dist not found — attempting runtime build of frontend');
       try {
-        execSync('npm run build -w frontend', { stdio: 'inherit', cwd: process.cwd(), env: process.env });
+        // Avoid using workspace flags at runtime since some environments have older npm.
+        // Build frontend by running install + build inside the frontend folder.
+        execSync('cd frontend && npm ci && npm run build', { stdio: 'inherit', cwd: process.cwd(), env: process.env });
         console.log('Runtime frontend build completed');
       } catch (err) {
         console.error('Runtime frontend build failed:', err);

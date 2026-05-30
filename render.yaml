@@ -4,7 +4,18 @@ services:
     env: node
     plan: free
     rootDir: .
-    buildCommand: npm install && npm run build -w frontend && npm run build -w backend
+    # Build frontend and backend without relying on npm workspaces flags, which
+    # may not be available in the platform's npm version. This runs separate
+    # installs and builds in each subfolder so artifacts persist into the runtime.
+    buildCommand: |
+      set -e
+      cd frontend
+      npm ci
+      npm run build
+      cd ../backend
+      npm ci
+      npm run build
+      cd ..
     startCommand: npm run start -w backend
     autoDeploy: true
     envVars:
