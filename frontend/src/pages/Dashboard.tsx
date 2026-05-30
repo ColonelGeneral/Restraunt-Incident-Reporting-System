@@ -340,12 +340,16 @@ export default function Dashboard() {
                 <div className="incident-grid">
                   {incidents.map((inc) => (
                     <div key={inc._id} className="incident-card">
-                      {inc.imageUrl ? (
-                        // eslint-disable-next-line jsx-a11y/img-redundant-alt
-                        <img src={inc.imageUrl} alt="incident thumbnail" className="incident-thumb" />
-                      ) : (
-                        <div className="incident-thumb" />
-                      )}
+                      <div className="incident-thumb-wrap">
+                        {inc.imageUrl ? (
+                          // eslint-disable-next-line jsx-a11y/img-redundant-alt
+                          <img src={inc.imageUrl} alt="incident thumbnail" className="incident-thumb" />
+                        ) : (
+                          <div className="incident-thumb incident-thumb-empty">
+                            <span>No image</span>
+                          </div>
+                        )}
+                      </div>
                       <div className="incident-meta">
                         <div className="incident-title">{inc.title}</div>
                         <div className="incident-sub">{inc.storeLocation} • {new Date(inc.createdAt).toLocaleString()}</div>

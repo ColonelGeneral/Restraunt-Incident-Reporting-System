@@ -82,7 +82,7 @@ Optional but supported:
 
 Set the frontend API base URL if you are not running the backend on the default local port:
 
-- `VITE_API_BASE_URL=http://localhost:5000`
+- `VITE_API_BASE_URL=https://restraunt-incident-reporting-system.onrender.com`
 
 ## Running Locally
 
@@ -170,34 +170,6 @@ A ready-to-run Postman collection is included for local API verification.
 
 Import both into Postman and point them at `http://localhost:5000`.
 
-## Deployment Guide
-
-The app is set up for a split deployment:
-
-- Frontend can be served by the backend on Render for a single URL.
-- Backend on Render, Railway, Fly.io, or another Node hosting provider.
-- MongoDB Atlas for persistence.
-
-### Render Deployment
-
-The repository includes a [render.yaml](render.yaml) blueprint so you can deploy the app as one Render web service from the same repo.
-
-1. Push the repository to GitHub.
-2. In Render, create a new Blueprint and connect the GitHub repo.
-3. Render will detect `render.yaml` and create a single backend web service.
-4. Add the backend environment variables in Render for the web service.
-5. Set `MONGODB_URI`, `JWT_SECRET`, and the optional AI/media variables.
-6. Open the Render service URL. That URL now serves the frontend app and the API.
-7. Log in with a demo account.
-
-Recommended Render values:
-
-- Backend build command: `npm install && npm run build -w backend`
-- Backend start command: `npm run start -w backend`
-- Backend build command on Render: `npm install && npm run build -w frontend && npm run build -w backend`
-
-For the backend service, Render sets `PORT` automatically in production, so you do not need to define it manually.
-
 ### Backend Deployment
 
 1. Create a new Node service.
@@ -224,14 +196,6 @@ For the backend service, Render sets `PORT` automatically in production, so you 
 3. Allow the deployment host IP or temporarily allow access from anywhere during testing.
 4. Copy the connection string into `MONGODB_URI`.
 
-### Deployment Checklist
-
-- Backend health check returns successfully.
-- Frontend points to the deployed API.
-- Demo accounts can log in.
-- Analytics is accessible to managers and admins.
-- Image upload works if Cloudinary is configured.
-- Status-change email works if SMTP is configured.
 
 ## Troubleshooting
 
@@ -254,4 +218,3 @@ For the backend service, Render sets `PORT` automatically in production, so you 
 
 - Employees can access their own incidents.
 - Managers and admins can access analytics and status changes.
-- The most common local setup is frontend on `http://localhost:5173` or `5175`, backend on `http://localhost:5000`.
