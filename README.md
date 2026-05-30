@@ -174,31 +174,27 @@ Import both into Postman and point them at `http://localhost:5000`.
 
 The app is set up for a split deployment:
 
-- Frontend on Vercel, Netlify, or similar static hosting.
+- Frontend can be served by the backend on Render for a single URL.
 - Backend on Render, Railway, Fly.io, or another Node hosting provider.
 - MongoDB Atlas for persistence.
 
 ### Render Deployment
 
-The repository includes a [render.yaml](render.yaml) blueprint so you can deploy both services from the same repo.
+The repository includes a [render.yaml](render.yaml) blueprint so you can deploy the app as one Render web service from the same repo.
 
 1. Push the repository to GitHub.
 2. In Render, create a new Blueprint and connect the GitHub repo.
-3. Render will detect `render.yaml` and create:
-	- a backend web service
-	- a frontend static site
+3. Render will detect `render.yaml` and create a single backend web service.
 4. Add the backend environment variables in Render for the web service.
 5. Set `MONGODB_URI`, `JWT_SECRET`, and the optional AI/media variables.
-6. Set `VITE_API_BASE_URL` on the frontend service to the backend service URL Render gives you.
-7. Redeploy the frontend after the backend URL is available.
-8. Open the frontend URL and log in with a demo account.
+6. Open the Render service URL. That URL now serves the frontend app and the API.
+7. Log in with a demo account.
 
 Recommended Render values:
 
 - Backend build command: `npm install && npm run build -w backend`
 - Backend start command: `npm run start -w backend`
-- Frontend build command: `npm install && npm run build -w frontend`
-- Frontend publish directory: `frontend/dist`
+- Backend build command on Render: `npm install && npm run build -w frontend && npm run build -w backend`
 
 For the backend service, Render sets `PORT` automatically in production, so you do not need to define it manually.
 
