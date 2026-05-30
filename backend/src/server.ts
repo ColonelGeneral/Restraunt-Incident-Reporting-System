@@ -1,6 +1,9 @@
-import dns from "dns";
+import dns from 'dns';
+import { existsSync } from 'fs';
+import { execSync } from 'child_process';
+import { resolve } from 'path';
 
-dns.setServers(["8.8.8.8", "8.8.4.4"]);
+dns.setServers(['8.8.8.8', '8.8.4.4']);
 
 import mongoose from 'mongoose';
 import { connectDatabase } from './config/db.js';
@@ -12,6 +15,18 @@ const app = createApp();
 
 async function startServer() {
   try {
+    // Ensure frontend build exists; if missing, try to build it at startup.
+    const frontendIndex = resolve(process.cwd(), 'frontend', 'dist', 'index.html');
+    if (!existsSync(frontendIndex)) {
+      console.warn('frontend/dist not found — attempting runtime build of frontend');
+      try {
+        execSync('npm run build -w frontend', { stdio: 'inherit', cwd: process.cwd(), env: process.env });
+        console.log('Runtime frontend build completed');
+      } catch (err) {
+        console.error('Runtime frontend build failed:', err);
+      }
+    }
+
     await connectDatabase();
     console.log('Mongo Ready State:', mongoose.connection.readyState);
 
