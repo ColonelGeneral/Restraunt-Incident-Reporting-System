@@ -13,6 +13,9 @@ import { uploadRouter } from './routes/upload.route.js';
 export const createApp = () => {
   const app = express();
   const frontendIndexPath = resolve(process.cwd(), 'frontend', 'dist', 'index.html');
+  const frontendDistDir = resolve(process.cwd(), 'frontend', 'dist');
+  const hasFrontend = existsSync(frontendDistDir);
+  console.log('Frontend build present at frontend/dist:', hasFrontend);
 
   app.use(helmet());
   app.use(cors());
@@ -24,23 +27,27 @@ export const createApp = () => {
   app.use('/api/ai', aiRouter);
   app.use('/api/analytics', analyticsRouter);
 
-  app.use((request, response, next) => {
-    if (request.method !== 'GET' || request.path.startsWith('/api')) {
-      next();
-      return;
-    }
+  // If a built frontend exists, serve its static assets and use an SPA fallback.
+  if (existsSync(frontendDistDir)) {
+    app.use(express.static(frontendDistDir, { index: false }));
 
-    if (existsSync(frontendIndexPath)) {
+    app.get('*', (request, response, next) => {
+      // Let API routes fall through to the API handlers
+      if (request.path.startsWith('/api')) return next();
+
+      // Serve index.html for any other GET so the SPA can handle routing
       response.sendFile(frontendIndexPath);
-      return;
-    }
-
-    response.json({
-      message: 'Restaurant Incident Reporting API is running',
-      health: '/api/health',
-      api: '/api',
     });
-  });
+  } else {
+    // No frontend build available — root shows a small API status object
+    app.get('/', (_, response) => {
+      response.json({
+        message: 'Restaurant Incident Reporting API is running',
+        health: '/api/health',
+        api: '/api',
+      });
+    });
+  }
 
   app.use((_, response) => {
     response.status(404).json({ message: 'Route not found' });
