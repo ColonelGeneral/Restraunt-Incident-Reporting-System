@@ -14,6 +14,13 @@ export const createApp = () => {
   app.use(helmet());
   app.use(cors());
   app.use(express.json());
+  app.get('/', (_, response) => {
+    response.json({
+      message: 'Restaurant Incident Reporting API is running',
+      health: '/api/health',
+      api: '/api',
+    });
+  });
   app.use('/api', healthRouter);
   app.use('/api/auth', authRouter);
   app.use('/api/uploads', uploadRouter);
