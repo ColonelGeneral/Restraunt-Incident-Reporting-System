@@ -15,18 +15,11 @@ const app = createApp();
 
 async function startServer() {
   try {
-    // Ensure frontend build exists; if missing, try to build it at startup.
+    // Check whether the built frontend is present. We do NOT attempt a runtime
+    // build here to avoid failures in restricted deployment environments.
     const frontendIndex = resolve(process.cwd(), 'frontend', 'dist', 'index.html');
     if (!existsSync(frontendIndex)) {
-      console.warn('frontend/dist not found — attempting runtime build of frontend');
-      try {
-        // Avoid using workspace flags at runtime since some environments have older npm.
-        // Build frontend by running install + build inside the frontend folder.
-        execSync('cd frontend && npm ci && npm run build', { stdio: 'inherit', cwd: process.cwd(), env: process.env });
-        console.log('Runtime frontend build completed');
-      } catch (err) {
-        console.error('Runtime frontend build failed:', err);
-      }
+      console.warn('frontend/dist not found — frontend build missing. Ensure the build step ran during deployment.');
     }
 
     await connectDatabase();
